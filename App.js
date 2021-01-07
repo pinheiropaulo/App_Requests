@@ -1,21 +1,82 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  Text,
+  Button,
+  StyleSheet,
+  TextInput,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
 
-export default function App() {
+const App = () => {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+
+  const handleSend = async () => {
+    if (title !== "" && body !== "") {
+      const req = await fetch("https://jsonplaceholder.typicode.com/posts", {
+        method: "POST",
+        body: JSON.stringify({
+          title: title,
+          body: body,
+          useId: 354,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await req.json();
+
+      alert(`Adicionado Nota : ${json.id} - ${json.title}`);
+    } else {
+      alert("Preencha as Informações.");
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="light" backgroundColor="#333" translucent={false} />
+      <Text style={styles.inputLabel}>Título:</Text>
+      <TextInput
+        style={styles.input}
+        value={title}
+        onChangeText={(t) => setTitle(t)}
+      />
+
+      <Text style={styles.inputLabel}>Corpo:</Text>
+      <TextInput
+        style={styles.input}
+        value={body}
+        onChangeText={(t) => setBody(t)}
+      />
+
+      <Button title="Enviar" onPress={handleSend} />
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#333",
+    padding: 10,
+  },
+  inputLabel: {
+    fontSize: 20,
+    color: "#FFF",
+    marginBottom: 10,
+  },
+  input: {
+    backgroundColor: "#555",
+    height: 45,
+    fontSize: 18,
+    color: "#FFF",
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginBottom: 30,
+    borderRadius: 5,
   },
 });
+
+export default App;
